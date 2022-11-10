@@ -43,7 +43,7 @@ def clean_data(df):
     '''
     df = df.drop_duplicates()
     df = df[df['related'] != 2]
-    df = df.dropna()
+    df = df.dropna(subset=['related'])
 
     return df
 
@@ -58,8 +58,8 @@ def save_data(df, database_filename):
     database_filename - name of the database e.g. DisasterResponse.db
     '''
     # storing the dataframe into a local sqlite database
-    engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql('ETL_Pipeline', engine, index=False)
+    engine = create_engine('sqlite:///{}'.format(database_filename))
+    df.to_sql('disaster_response', engine, index=False, if_exists='replace')
 
 
 def main():
@@ -85,7 +85,7 @@ def main():
               'well as the filepath of the database to save the cleaned data '\
               'to as the third argument. \n\nExample: python process_data.py '\
               'disaster_messages.csv disaster_categories.csv '\
-              'DisasterResponse.db')
+              'disaster_response.db')
 
 
 if __name__ == '__main__':
