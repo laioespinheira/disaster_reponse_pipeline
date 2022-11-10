@@ -2,19 +2,26 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 
+
 def load_data(messages_filepath, categories_filepath):
-    #import csv's
+    '''
+    input: messages_filepath and categories_filepath, e.g. disaster_messages.csv and disaster_categories.csv
+    output: df
+
+    Using the pandas library we import, clean and concat the data into a final dataframe
+    '''
+    # import csv's
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
 
-    #split string on categories
+    # split string on categories
     categories = categories.categories.str.split(';', expand=True)
-    #create column names based on columns
+    # create column names based on columns
     row = categories.iloc[0, :]
     categories_colnames = list(map(lambda x: x[:-2], row))
     categories.columns = categories_colnames
 
-    #getting only 0s and 1s from categories and transforming to integers
+    # getting only 0s and 1s from categories and transforming to integers
     for column in categories:
         # set each value to be the last character of the string
         categories[column] = categories[column].str[-1]
@@ -26,18 +33,26 @@ def load_data(messages_filepath, categories_filepath):
 
     return df
 
-def clean_data(df):
 
+def clean_data(df):
+    '''
+    input: df
+    output: df
+
+    another series of cleasing is done with the clean_data function
+    '''
     df = df.drop_duplicates()
     df = df[df['related'] != 2]
     df = df.dropna()
 
     return df
 
-def save_data(df, database_filename):
 
+def save_data(df, database_filename):
+    # storing the dataframe into a local sqlite database
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('ETL_Pipeline', engine, index=False)
+
 
 def main():
     if len(sys.argv) == 4:
@@ -50,12 +65,12 @@ def main():
 
         print('Cleaning data...')
         df = clean_data(df)
-        
+
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
         save_data(df, database_filepath)
-        
+
         print('Cleaned data saved to database!')
-    
+
     else:
         print('Please provide the filepaths of the messages and categories '\
               'datasets as the first and second argument respectively, as '\

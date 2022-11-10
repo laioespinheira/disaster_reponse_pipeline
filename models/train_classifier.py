@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import pickle
 import nltk
+
 nltk.download('omw-1.4')
 
 from sqlalchemy import create_engine
@@ -15,7 +16,14 @@ from sklearn.model_selection import GridSearchCV
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
+
 def load_data(database_filepath):
+    '''
+    input: database_filepath, e.g. "DisasterResponse.db"
+    output: X, Y, category_names (Feature and target variables, category_names (all categories names in the dataset)
+
+    On this function we get the database_filename, define X, Y and category_names and return it
+    '''
 
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('ETL_Pipeline', engine)
@@ -26,8 +34,14 @@ def load_data(database_filepath):
 
     return X, Y, category_names
 
-def tokenize(text):
 
+def tokenize(text):
+    '''
+    input: text
+    output: clean_tokens
+
+    Using the nltk library(Natural Language Toolkit) this function perform tokenization and cleaning on the text and returns it
+    '''
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -38,8 +52,15 @@ def tokenize(text):
 
     return clean_tokens
 
-def build_model():
 
+def build_model():
+    '''
+    input: none
+    output: cv model
+
+    The pipeline from scikit-learn library is used here to assemble several steps that can be cross-validated together while setting
+    different parameters
+    '''
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -57,13 +78,13 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-
     y_pred = model.predict(X_test)
     print(classification_report(Y_test, y_pred, target_names=category_names))
 
-def save_model(model, model_filepath):
 
+def save_model(model, model_filepath):
     pickle.dump(model, open(model_filepath, 'wb'))
+
 
 def main():
     if len(sys.argv) == 3:
@@ -71,13 +92,13 @@ def main():
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
+
         print('Building model...')
         model = build_model()
-        
+
         print('Training model...')
         model.fit(X_train, Y_train)
-        
+
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
 
