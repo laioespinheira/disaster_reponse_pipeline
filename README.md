@@ -15,7 +15,7 @@ Using this data I was able to train and test a classifier model that will help t
 ### Project Structure
 
 	- app/: This is the folder where the flask app is stored
-	- data/: csv files, database file and process_data.py(used to load and clean the data)
+	- data/: csv files, database file, process_data.py(used to load and clean the data) and classifier.pkl
 	- models/:  train_classifier.py, python script used to create the model for the app
 
 ### Instructions:
