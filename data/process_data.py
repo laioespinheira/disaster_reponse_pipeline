@@ -49,6 +49,14 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''
+    save_data
+    creates a local sqlite database
+
+    Input:
+    df - dataframe to be stored as a db
+    database_filename - name of the database e.g. DisasterResponse.db
+    '''
     # storing the dataframe into a local sqlite database
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('ETL_Pipeline', engine, index=False)

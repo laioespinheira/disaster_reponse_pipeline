@@ -78,11 +78,35 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    evaluate_model
+    generates a report with f1 score, precision and recall
+
+    Input:
+    model - model to be used e.g. GridSearchCV
+    X_test - feature test
+    Y_test - target test
+    category_names - category to be scored
+
+    Output:
+    report with scores
+    '''
     y_pred = model.predict(X_test)
     print(classification_report(Y_test, y_pred, target_names=category_names))
 
 
 def save_model(model, model_filepath):
+    '''
+    save_model
+    saves the model in a pickle file
+
+    Input:
+    model - model to be used e.g. GridSearchCV
+    model_filepath - filepath to pickle file
+
+    Returns:
+    none
+    '''
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
